@@ -1,0 +1,84 @@
+# CI/CD for the spam-filter service. Runs on GitHub's machines on every push.
+#
+#   test ──► build ──► deploy
+#   pytest    image      Render runs the new image
+#   terraform ghcr.io    then a smoke test checks it is live
+name: ci-cd
+
+on:
+  push:
+  workflow_dispatch:      # adds a "Run workflow" button on the Actions tab
+
+permissions:
+  contents: read
+  packages: write         # lets the build job push images to ghcr.io
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run the tests
+        run: pytest -q
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Check the Terraform code
+        run: |
+          terraform -chdir=infra fmt -check -diff
+          terraform -chdir=infra init -backend=false -input=false
+          terraform -chdir=infra validate
+
+  build:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.name.outputs.image }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Name the image after the commit
+        id: name
+        run: |
+          repo="ghcr.io/${GITHUB_REPOSITORY,,}"          # image names must be lower case
+          echo "repo=$repo" >> "$GITHUB_OUTPUT"
+          echo "image=$repo:$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push the image
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          docker build --build-arg APP_VERSION="$GITHUB_SHA" \
+            --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
+            -t "${{ steps.name.outputs.image }}" -t "${{ steps.name.outputs.repo }}:latest" .
+          docker push "${{ steps.name.outputs.image }}"
+          docker push "${{ steps.name.outputs.repo }}:latest"
+
+  # Task 2
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main' && vars.RENDER_SERVICE_ID != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Deploy the new image to Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ vars.RENDER_SERVICE_ID }}
+        run: tools/render_deploy.sh "${{ needs.build.outputs.image }}"
+
+      - name: Smoke test - is this commit live?
+        run: |
+          curl --fail --silent --retry 10 --retry-all-errors --retry-delay 10 \
+            "${{ vars.APP_URL }}/health" | tee health.json
+          grep -q "$GITHUB_SHA" health.json

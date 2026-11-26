@@ -1,0 +1,26 @@
+{
+  "name": "SE4AI Week 8 Operations",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "features": {
+    "ghcr.io/devcontainers/features/terraform:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "pip install -r requirements-dev.txt && (command -v jq || (sudo apt-get update && sudo apt-get install -y jq))",
+  "remoteEnv": {
+    "TF_VAR_github_repository": "${containerEnv:GITHUB_REPOSITORY}",
+    "TF_VAR_render_api_key": "${containerEnv:RENDER_API_KEY}",
+    "TF_VAR_render_owner_id": "${containerEnv:RENDER_OWNER_ID}",
+    "TF_VAR_grafana_stack_slug": "${containerEnv:GRAFANA_STACK_SLUG}",
+    "TF_VAR_grafana_cloud_access_policy_token": "${containerEnv:GRAFANA_CLOUD_ACCESS_POLICY_TOKEN}",
+    "TF_VAR_grafana_service_account_token": "${containerEnv:GRAFANA_SERVICE_ACCOUNT_TOKEN}"
+  },
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": { "label": "Spam filter" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "hashicorp.terraform"]
+    }
+  }
+}

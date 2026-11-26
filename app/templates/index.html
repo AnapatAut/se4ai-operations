@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Comment spam filter</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; color: #222; }
+    textarea { width: 100%; min-height: 6rem; font: inherit; padding: .5rem; box-sizing: border-box; }
+    button { font: inherit; padding: .4rem 1rem; margin-top: .5rem; }
+    #result { margin-top: 1rem; padding: .75rem; border-radius: .4rem; display: none; }
+    .ham { background: #e5f5e9; } .spam { background: #fde8e8; }
+    small { color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Comment spam filter</h1>
+  <p>Write a blog comment and check whether the filter lets it through.</p>
+  <textarea id="text">Great post, thanks for the clear explanation!</textarea>
+  <button id="check">Check comment</button>
+  <div id="result"></div>
+  <p><small>Version {{ version }} · prompt {{ prompt_version }}</small></p>
+  <script>
+    document.getElementById("check").addEventListener("click", async () => {
+      const box = document.getElementById("result");
+      const res = await fetch("/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: document.getElementById("text").value }),
+      });
+      const data = await res.json();
+      box.style.display = "block";
+      if (!res.ok) { box.className = "spam"; box.textContent = data.error; return; }
+      box.className = data.spam ? "spam" : "ham";
+      box.textContent = (data.spam ? "Blocked as spam" : "Published") + " (score " + data.score + ")";
+    });
+  </script>
+</body>
+</html>

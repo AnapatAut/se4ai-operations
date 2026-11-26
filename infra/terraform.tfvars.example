@@ -1,0 +1,10 @@
+# Only if you work on your own machine instead of the Codespace:
+#   cp terraform.tfvars.example terraform.tfvars    and fill in the values.
+# terraform.tfvars is in .gitignore: it holds secrets, never commit it.
+
+github_repository                 = "your-github-username/se4ai-operations"
+render_api_key                    = "rnd_..."
+render_owner_id                   = "tea-..."
+grafana_stack_slug                = "yourstack"
+grafana_cloud_access_policy_token = "glc_..."
+grafana_service_account_token     = "glsa_..."
