@@ -3,7 +3,7 @@
 * CMKL 41-645 Software Engineering for AI-Enabled Systems
 * Week 8: Architecture and Design: Planning for Operations
 
-**Individual work · about 20 minutes before class + 55 minutes in class**
+**Individual homework · about 20 minutes of preparation + 55 minutes for the tasks**
 
 ## Learning outcomes
 
@@ -71,9 +71,9 @@ Everything runs on free plans: **GitHub** (Codespaces, Actions, the ghcr.io imag
 
 ---
 
-## Before class (about 20 min, at home)
+## Preparation (about 20 min)
 
-Creating accounts and tokens takes time and needs your e-mail, so do it **before** class. Sign up for Render and Grafana Cloud **with your GitHub account**: it is the fastest way.
+Creating accounts and tokens takes time and needs your e-mail, so do it **first**, before you start the tasks. Sign up for Render and Grafana Cloud **with your GitHub account**: it is the fastest way.
 
 > [!IMPORTANT]
 > Treat every token like a password. Save tokens only as **secrets** (steps 4 and 5). Never write them in a file, a commit, or a chat. If a token leaks, delete it and create a new one.
@@ -82,7 +82,7 @@ Creating accounts and tokens takes time and needs your e-mail, so do it **before
 
 2. **Render** (hosting). Create a free account at [render.com](https://render.com).
    - **Account Settings → API Keys → Create API Key**. Copy it.
-   - If Render asks you for a credit card and you cannot add one, tell the instructor **before class**.
+   - If Render asks you for a credit card and you cannot add one, tell the instructor **before you continue**.
 
 3. **Grafana Cloud** (metrics and dashboards). Create a free account at [grafana.com](https://grafana.com/auth/sign-up/create-user). You get a **stack**: your own Grafana at `https://<stack>.grafana.net`. The `<stack>` part is your **stack slug**.
    - **Access policy token.** At [grafana.com](https://grafana.com), open **My Account → Security → Access Policies → Create access policy**. Realm: your stack. Scopes: **stacks: Read** and **integration-management: Read and Write**. Then click **Add token** on the new policy and copy it (it starts with `glc_`).
@@ -123,7 +123,7 @@ python3 -m pytest -q
 12 tests pass and 9 fail: the failing ones are Tasks 1 and 2.
 
 > [!WARNING]
-> **Solutions are in [`solutions/`](solutions/README.md). Try each task on your own first.** Use the **Stuck?** tips and ask the TA before you look.
+> **Solutions are in [`solutions/`](solutions/README.md). Try each task on your own first.** Use the **Stuck?** tips and ask a classmate or the TA before you look.
 
 ---
 
@@ -169,7 +169,7 @@ The `deploy` job is commented out. Uncomment it and replace the three `???`:
 
 - `needs`: which job must succeed first? (The deploy also uses that job's output: the image name.)
 - `if`: deploy **only from `main`**, and **only once the `RENDER_SERVICE_ID` repository variable is set**. You create that variable in Task 3; until then, the deploy must be skipped, not fail.
-- `RENDER_API_KEY`: read it from the secret you saved before class.
+- `RENDER_API_KEY`: read it from the secret you saved during the preparation.
 
 ```bash
 python3 -m pytest -q                 # everything passes now

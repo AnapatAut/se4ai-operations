@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Checks the accounts and tokens you prepared before class.
+# Checks the accounts and tokens you created during the preparation (README).
 #
 #   tools/check_setup.sh
 #

@@ -75,7 +75,7 @@ jobs:
   #
   #     - name: Deploy the new image to Render
   #       env:
-  #         RENDER_API_KEY: ???   # the secret you saved before class
+  #         RENDER_API_KEY: ???   # the secret you saved during the preparation
   #         RENDER_SERVICE_ID: ${{ vars.RENDER_SERVICE_ID }}
   #       run: tools/render_deploy.sh "${{ needs.build.outputs.image }}"
   #

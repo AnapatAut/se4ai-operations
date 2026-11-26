@@ -1,6 +1,6 @@
 # Each variable is read from the environment variable TF_VAR_<name>.
 # In the Codespace, .devcontainer/devcontainer.json sets them from the
-# Codespaces secrets you saved before class. On your own machine, copy
+# Codespaces secrets you saved during the preparation. On your own machine, copy
 # terraform.tfvars.example to terraform.tfvars and fill it in instead.
 
 variable "render_api_key" {
