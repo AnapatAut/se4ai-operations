@@ -6,7 +6,7 @@ environment variable when you run the app on your own machine.
 """
 import os
 
-PROMPT_VERSION = os.environ.get("PROMPT_VERSION", "v2")
+PROMPT_VERSION = os.environ.get("PROMPT_VERSION", "v1")
 
 # Set by the Docker build in CI (the git commit). "dev" on your machine.
 APP_VERSION = os.environ.get("APP_VERSION", "dev")
