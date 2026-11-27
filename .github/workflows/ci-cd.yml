@@ -66,21 +66,21 @@ jobs:
   # TODO Task 2: uncomment the deploy job below (select the lines, then Ctrl+/ or Cmd+/)
   # and replace the three ??? .
   #
-  # deploy:
-  #   needs: ???              # which job must succeed before we deploy?
-  #   if: ???                 # only on the main branch, and only once vars.RENDER_SERVICE_ID is set
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v7
-  #
-  #     - name: Deploy the new image to Render
-  #       env:
-  #         RENDER_API_KEY: ???   # the secret you saved during the preparation
-  #         RENDER_SERVICE_ID: ${{ vars.RENDER_SERVICE_ID }}
-  #       run: tools/render_deploy.sh "${{ needs.build.outputs.image }}"
-  #
-  #     - name: Smoke test - is this commit live?
-  #       run: |
-  #         curl --fail --silent --retry 10 --retry-all-errors --retry-delay 10 \
-  #           "${{ vars.APP_URL }}/health" | tee health.json
-  #         grep -q "$GITHUB_SHA" health.json
+  deploy:
+    needs: build            # which job must succeed before we deploy?
+    if: github.ref == 'refs/heads/main' && vars.RENDER_SERVICE_ID != ''  # only on the main branch, and only once vars.RENDER_SERVICE_ID is set
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Deploy the new image to Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}  # the secret you saved during the preparation
+          RENDER_SERVICE_ID: ${{ vars.RENDER_SERVICE_ID }}
+        run: tools/render_deploy.sh "${{ needs.build.outputs.image }}"
+
+      - name: Smoke test - is this commit live?
+        run: |
+          curl --fail --silent --retry 10 --retry-all-errors --retry-delay 10 \
+            "${{ vars.APP_URL }}/health" | tee health.json
+          grep -q "$GITHUB_SHA" health.json

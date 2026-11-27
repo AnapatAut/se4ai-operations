@@ -33,9 +33,13 @@ def check():
 
     # TODO Task 1d: count this request with metrics.REQUESTS,
     # and time the model call below with metrics.LATENCY.
-    is_spam, score = spam.check(text, PROMPT_VERSION)
+    metrics.REQUESTS.inc()
+    with metrics.LATENCY.time():
+        is_spam, score = spam.check(text, PROMPT_VERSION)
 
     # TODO Task 1e: if the comment is spam, count it with metrics.SPAM.
+    if is_spam:
+        metrics.SPAM.inc()
 
     return jsonify(spam=is_spam, score=score, prompt_version=PROMPT_VERSION)
 

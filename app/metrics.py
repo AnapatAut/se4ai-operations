@@ -15,11 +15,13 @@ BUILD_INFO = Info("spam_filter_build", "Version of the code and prompt that is r
 LATENCY_BUCKETS = (0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0)
 
 # TODO Task 1a: a Counter named "spam_requests_total" for every comment checked.
-REQUESTS = None
+REQUESTS = Counter("spam_requests_total", "Comments checked")
 
 # TODO Task 1b: a Counter named "spam_detected_total" for comments flagged as spam.
-SPAM = None
+SPAM = Counter("spam_detected_total", "Comments flagged as spam")
 
 # TODO Task 1c: a Histogram named "spam_inference_seconds" for the time the
 # model takes per comment. Pass buckets=LATENCY_BUCKETS.
-LATENCY = None
+LATENCY = Histogram(
+    "spam_inference_seconds", "Time the model takes per comment", buckets=LATENCY_BUCKETS
+)
