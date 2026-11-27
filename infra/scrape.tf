@@ -8,17 +8,17 @@
 # Cmd+/) and replace the three ??? . Look at main.tf: the values you need are
 # attributes of resources defined there.
 #
-# resource "grafana_connections_metrics_endpoint_scrape_job" "app" {
-#   provider                = grafana.connections
-#   stack_id                = data.grafana_cloud_stack.this.id
-#   name                    = "spam-filter"
-#   enabled                 = true
-#   scrape_interval_seconds = 60
-#
-#   # The full https:// URL of the metrics page of your Render service.
-#   url = ???
-#
-#   # How app/main.py checks who may read /metrics: "basic" or "bearer"?
-#   authentication_method       = ???
-#   authentication_bearer_token = ???
-# }
+resource "grafana_connections_metrics_endpoint_scrape_job" "app" {
+  provider                = grafana.connections
+  stack_id                = data.grafana_cloud_stack.this.id
+  name                    = "spam-filter"
+  enabled                 = true
+  scrape_interval_seconds = 60
+
+  # The full https:// URL of the metrics page of your Render service.
+  url = "${render_web_service.app.url}/metrics"
+
+  # How app/main.py checks who may read /metrics: "basic" or "bearer"?
+  authentication_method       = "bearer"
+  authentication_bearer_token = random_password.metrics_token.result
+}
